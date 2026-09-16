@@ -12,7 +12,7 @@ Next.js 16 · React 19 · TypeScript · Tailwind CSS v4 · Framer Motion · Leni
 
 ```bash
 npm install
-cp .env.example .env.local   # set NEXT_PUBLIC_SITE_URL, and Resend vars to deliver the contact form
+cp .env.example .env.local   # set NEXT_PUBLIC_SITE_URL
 npm run dev
 ```
 
@@ -105,8 +105,6 @@ before hydration. Worth preserving when adding sections:
   off-screen;
 - Lenis runs on fine-pointer devices only and its rAF loop sleeps when idle;
   parallax is desktop-only;
-- keep `zod` (and other server-only libraries) out of client components — import
-  form constants from `src/lib/validations/contact-fields.ts`.
 
 ## Content rules
 

@@ -8,9 +8,7 @@ import { siteConfig, socialLinks } from "@/config/site";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/get-dictionary";
 
-import { ContactForm } from "./contact-form";
-
-export function Contact({ locale, dict, as = "h2" }: { locale: Locale; dict: Dictionary; as?: "h1" | "h2" }) {
+export function Contact({ dict, as = "h2" }: { locale: Locale; dict: Dictionary; as?: "h1" | "h2" }) {
   const c = dict.contact;
 
   return (
@@ -26,8 +24,10 @@ export function Contact({ locale, dict, as = "h2" }: { locale: Locale; dict: Dic
               </ButtonLink>
             </div>
           </Reveal>
+        </div>
+        <div className="lg:col-span-7 lg:self-end">
           <Reveal delay={0.2}>
-            <div className="mt-12">
+            <div>
               <p className="label-mono text-fg-subtle">{c.channelsTitle}</p>
               <ul className="mt-5 space-y-3">
                 <li>
@@ -84,11 +84,6 @@ export function Contact({ locale, dict, as = "h2" }: { locale: Locale; dict: Dic
                 })}
               </ul>
             </div>
-          </Reveal>
-        </div>
-        <div className="lg:col-span-7">
-          <Reveal delay={0.1}>
-            <ContactForm locale={locale} copy={c} email={siteConfig.contact.email} />
           </Reveal>
         </div>
       </div>
