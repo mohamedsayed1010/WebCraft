@@ -1,0 +1,90 @@
+/* ==========================================================================
+   WEBCRAFT — MOTION (CSS)
+   --------------------------------------------------------------------------
+   Scroll reveals driven by `data-*` flags that RevealScript sets. Only
+   `opacity` and `transform` animate, so every entrance stays on the compositor.
+   Hidden states apply only when scripting is on and motion is welcome — with JS
+   disabled or reduced motion, content is simply there.
+   ========================================================================== */
+
+/* Nested reveals don't inherit a parent item's stagger index. */
+[data-reveal]:not([data-reveal-item]),
+[data-reveal-group] {
+  --i: 0;
+}
+
+[data-reveal],
+[data-reveal-item] {
+  transition:
+    opacity 0.7s var(--ease-brand),
+    transform 0.9s var(--ease-brand);
+  transition-delay: calc(var(--reveal-delay, 0s) + var(--i, 0) * var(--stagger, 0s));
+}
+
+@media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+  :root:not(.no-io) [data-reveal="rise"]:not([data-shown]),
+  :root:not(.no-io) [data-reveal-group]:not([data-shown]) [data-reveal-item="rise"] {
+    opacity: 0;
+    transform: translate3d(0, 24px, 0);
+  }
+
+  :root:not(.no-io) [data-reveal="fade"]:not([data-shown]),
+  :root:not(.no-io) [data-reveal-group]:not([data-shown]) [data-reveal-item="fade"] {
+    opacity: 0;
+  }
+
+  :root:not(.no-io) [data-reveal="scale"]:not([data-shown]),
+  :root:not(.no-io) [data-reveal-group]:not([data-shown]) [data-reveal-item="scale"] {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+
+  /* Headline lines rise from beneath their own baseline. */
+  :root:not(.no-io) [data-reveal-group]:not([data-shown]) [data-reveal-item="line"] {
+    opacity: 0;
+    transform: translate3d(0, 105%, 0);
+  }
+  [data-reveal-item="line"] {
+    transition-duration: 0.6s, 1s;
+  }
+}
+
+/* Infinite decorative loops pause while their section is off-screen, so the
+   page does no animation work for things nobody can see. */
+[data-loop]:not([data-inview]) :is(*, *::before, *::after) {
+  animation-play-state: paused !important;
+}
+
+/* Status pulse: a scaling ring on a pseudo-element (transform + opacity)
+   instead of an animated box-shadow, which repaints every frame. */
+.pulse-ring {
+  position: relative;
+}
+.pulse-ring::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: inherit;
+  animation: pulse-ring 2.2s var(--ease-power) infinite;
+  will-change: transform, opacity;
+}
+@keyframes pulse-ring {
+  0% { transform: scale(1); opacity: 0.55; }
+  75%, 100% { transform: scale(2.8); opacity: 0; }
+}
+
+@keyframes hero-in {
+  from { opacity: 0; transform: translate3d(0, var(--from-y, 40px), 0) scale(var(--from-scale, 1)); }
+}
+/* Hero visual layers enter on load with pure CSS — no waiting for hydration. */
+.hero-in {
+  animation: hero-in 1.2s var(--ease-brand) both;
+  animation-delay: var(--in-delay, 0s);
+}
+/* Final CTA ribbon drift: translates an oversized gradient layer (compositor)
+   instead of animating background-position (repaints every frame). */
+@keyframes slide-x {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-50%, 0, 0); }
+}

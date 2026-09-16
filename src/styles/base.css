@@ -1,0 +1,90 @@
+/* ==========================================================================
+   WEBCRAFT — BASE
+   ========================================================================== */
+
+@layer base {
+  html {
+    background: var(--color-canvas);
+    color: var(--color-fg);
+    color-scheme: light;
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-padding-top: 5.5rem;
+  }
+
+  html[dir="rtl"] {
+    --marquee-dir: -1;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    line-height: var(--lh-body);
+    background: var(--color-canvas);
+    min-height: 100dvh;
+    overflow-x: clip;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    letter-spacing: var(--tracking-display);
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    background: var(--color-brand-200);
+    color: var(--color-navy);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brand-600);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+
+  a, button, [role="button"], summary {
+    -webkit-tap-highlight-color: transparent;
+    cursor: pointer;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+  }
+
+  img, video, svg {
+    display: block;
+    max-width: 100%;
+  }
+
+  input, textarea, select {
+    font: inherit;
+  }
+
+  /* Numbers, URLs and code stay LTR inside Arabic copy. */
+  bdi, .ltr {
+    direction: ltr;
+    unicode-bidi: isolate;
+  }
+}
+
+/* Lenis */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: clip; }
+
+/* Reduced motion: keep the page composed, drop the movement. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .motion-cursor { display: none !important; }
+}

@@ -1,0 +1,554 @@
+/* ==========================================================================
+   WEBCRAFT — SIGNATURE UTILITIES
+   --------------------------------------------------------------------------
+   The reusable pieces of the visual identity, expressed as Tailwind v4
+   `@utility` rules so they compose with variants (hover:, md:, group-…).
+
+   These are the "texture" of the brand — noise, glow, pixel labels, grid
+   rules, brush masks. They exist here rather than inside components so the
+   look stays identical everywhere it appears.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   NOISE / GRAIN
+   A flat near-black is a dead near-black. A few percent of self-generated
+   SVG grain is what separates "premium print" from "default dark mode".
+   Generated inline — no network request, no asset to manage.
+   -------------------------------------------------------------------------- */
+@utility noise {
+  position: relative;
+  isolation: isolate;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    opacity: var(--noise-opacity);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 140px 140px;
+    mix-blend-mode: overlay;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   GLOW
+   Depth on near-black comes from coloured bloom, never grey drop-shadow.
+
+   The bloom itself needs no @utility: `--shadow-glow-lime` and
+   `--shadow-glow-violet` in tokens.css already generate `shadow-glow-lime`
+   and `shadow-glow-violet` through Tailwind's shadow namespace.
+   -------------------------------------------------------------------------- */
+
+/* A soft radial atmosphere blob. Sized and positioned by the consumer;
+   this only owns the gradient itself.
+
+   NO `filter: blur()`. These orbs are sized in the 30–46rem range, and a
+   48px blur on a 700px layer is a full-surface repaint the compositor
+   redoes on every scroll frame — measured here as a renderer lock-up on a
+   page carrying several of them at once. A radial gradient with soft stops
+   is already soft; the blur was buying nothing but cost. Extra stops do the
+   feathering the filter used to. */
+@utility orb-violet {
+  background-image: radial-gradient(
+    circle at center,
+    rgb(109 40 255 / 0.5) 0%,
+    rgb(109 40 255 / 0.28) 26%,
+    rgb(109 40 255 / 0.12) 46%,
+    rgb(109 40 255 / 0.04) 62%,
+    transparent 78%
+  );
+  pointer-events: none;
+}
+
+@utility orb-lime {
+  background-image: radial-gradient(
+    circle at center,
+    rgb(182 255 0 / 0.3) 0%,
+    rgb(182 255 0 / 0.16) 26%,
+    rgb(182 255 0 / 0.07) 46%,
+    rgb(182 255 0 / 0.02) 64%,
+    transparent 78%
+  );
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------------------
+   PIXEL LABEL
+   The controlled dose of pixel typography: eyebrows, section indices, tags,
+   metric captions. Capped at 11px by design — see the hard rule in tokens.css.
+   -------------------------------------------------------------------------- */
+@utility pixel-label {
+  font-family: var(--font-pixel);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-pixel);
+  text-transform: uppercase;
+  line-height: 1;
+  /* Latin/numeric content only — Silkscreen has no Arabic glyphs. */
+  unicode-bidi: isolate;
+  direction: ltr;
+}
+
+/**
+ * Micro-label in the Arabic body face — the non-pixel alternative, used where
+ * a pixel face would be one texture too many, and the only one of the two
+ * that may carry Arabic.
+ *
+ * No `text-transform` and no negative tracking: this label holds Arabic, and
+ * both would be wrong for it. The wide positive tracking is what gives it the
+ * "label" register instead — it reads as deliberate spacing rather than as
+ * shouted text.
+ */
+@utility eyebrow {
+  font-family: var(--font-sans);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: var(--tracking-label);
+  line-height: 1;
+  color: var(--color-fg-subtle);
+}
+
+/* --------------------------------------------------------------------------
+   DISPLAY TYPE
+   -------------------------------------------------------------------------- */
+/* Arabic mega display. No uppercase (the script has no case) and no negative
+   tracking — it would break the cursive joins.
+
+   `--leading-mega` is 1.2, and the `line-height` declared here is a floor
+   rather than a guarantee: a `text-*` utility on the same element carries its
+   own line-height and wins. Any heading using this should also carry
+   `leading-mega` explicitly. See the paired-line-height block in tokens.css
+   for what happens when it does not. */
+@utility display-mega {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--text-8xl);
+  line-height: var(--leading-mega);
+  letter-spacing: var(--tracking-mega);
+}
+
+/* Latin mega display — the tagline lockup and nothing else. This is where the
+   tight negative tracking and sub-1.0 leading live, because Archivo can take
+   what Noto Kufi cannot. */
+@utility display-mega-latin {
+  font-family: var(--font-latin);
+  font-weight: 900;
+  font-size: var(--text-7xl);
+  line-height: var(--leading-latin-mega);
+  letter-spacing: var(--tracking-latin-mega);
+  text-transform: uppercase;
+  font-stretch: 112%;
+  unicode-bidi: isolate;
+  direction: ltr;
+}
+
+/* Latin display at heading scale — section kickers, the footer wordmark. */
+@utility latin-display {
+  font-family: var(--font-latin);
+  font-weight: 800;
+  line-height: var(--leading-latin-display);
+  letter-spacing: var(--tracking-latin-display);
+  text-transform: uppercase;
+}
+
+/* Lime→violet sweep for a single emphasised word. Used at most once per
+   viewport; more than that and it stops meaning anything. */
+@utility text-gradient-brand {
+  background-image: linear-gradient(
+    100deg,
+    var(--color-lime-500) 0%,
+    var(--color-lime-300) 28%,
+    var(--color-violet-400) 78%
+  );
+  background-clip: text;
+  color: transparent;
+  -webkit-background-clip: text;
+}
+
+/* Outlined display type — depth without weight. Pairs with a solid line
+   above or below it in the same headline. */
+@utility text-outline {
+  color: transparent;
+  -webkit-text-stroke: 1px var(--color-border-strong);
+}
+
+/**
+ * EXTRUDED TYPE — lifted straight off the mark.
+ *
+ * The logo's letterforms are not flat: WEB and CRAFT each sit on a short,
+ * hard-edged extrusion that reads as a slab of material rather than as a drop
+ * shadow. Reproducing it in CSS is a stack of offset text-shadows with zero
+ * blur — blur would turn it back into a shadow and lose the whole effect.
+ *
+ * Used on at most one headline per page. It is a loud device, and its value
+ * comes entirely from being the thing the logo does.
+ */
+@utility text-extrude {
+  text-shadow:
+    1px 1px 0 var(--extrude-color, rgb(0 0 0 / 0.9)),
+    2px 2px 0 var(--extrude-color, rgb(0 0 0 / 0.9)),
+    3px 3px 0 var(--extrude-color, rgb(0 0 0 / 0.9)),
+    4px 4px 0 var(--extrude-color, rgb(0 0 0 / 0.9)),
+    5px 5px 0 var(--extrude-color, rgb(0 0 0 / 0.9)),
+    6px 6px 0 var(--extrude-color, rgb(0 0 0 / 0.9));
+}
+
+/**
+ * BRUSH SLAB — the black bar under CRAFT that carries ويب كرافت in lime.
+ *
+ * The single most recognisable element in the mark after the circle, and the
+ * brand's designated way of holding a short line of Arabic. The rough cut is a
+ * clip-path polygon rather than an image: it scales to any text length, costs
+ * no request, and stays crisp at any density.
+ *
+ * The asymmetric vertices are deliberate. A symmetric polygon reads as a
+ * chamfered rectangle; uneven ones read as something that was cut by hand.
+ */
+@utility brush-slab {
+  position: relative;
+  display: inline-block;
+  background-color: var(--color-ink-950);
+  clip-path: polygon(
+    1.2% 14%,
+    6% 4%,
+    22% 9%,
+    41% 2%,
+    63% 8%,
+    82% 1%,
+    96% 10%,
+    99% 26%,
+    98.4% 62%,
+    99.2% 84%,
+    88% 96%,
+    68% 90%,
+    47% 98%,
+    26% 91%,
+    9% 97%,
+    2% 82%,
+    0.6% 48%
+  );
+}
+
+/**
+ * MARKER HIGHLIGHT — a lime swipe behind a single emphasised word.
+ *
+ * The paper-block counterpart to `text-gradient-brand`, which cannot be used
+ * on white: lime text on white measures 1.2:1 and is illegible. Here the lime
+ * becomes a *fill* sitting behind near-black text, which is both on-brand and
+ * comfortably above AAA.
+ *
+ * Sits at z-index -1 behind the text, inset slightly from the baseline so it
+ * looks drawn over the words rather than boxed around them.
+ */
+@utility marker-lime {
+  position: relative;
+  isolation: isolate;
+  padding-inline: 0.18em;
+
+  &::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset-inline: 0;
+    bottom: 0.06em;
+    height: 0.62em;
+    background-color: var(--color-lime-500);
+    transform: rotate(-0.7deg);
+    clip-path: polygon(
+      0.5% 22%,
+      12% 6%,
+      34% 16%,
+      58% 4%,
+      79% 14%,
+      99% 8%,
+      99.5% 74%,
+      86% 94%,
+      62% 84%,
+      38% 96%,
+      15% 86%,
+      1% 95%
+    );
+  }
+}
+
+/* --------------------------------------------------------------------------
+   SURFACES
+   --------------------------------------------------------------------------
+   Every card on the site is this card.
+
+   Before this existed, six sections had each invented their own: surface at
+   40%, 50%, 55% and 60%, padding at 6 and 7, two different hover tints. None
+   of the differences meant anything — they were drift — but the eye reads
+   drift as six loosely-related designs rather than one system. Collapsing
+   them into a single utility is the single largest "same brand" win available
+   on the page.
+   -------------------------------------------------------------------------- */
+@utility card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: var(--card-p, 1.75rem);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background-color: color-mix(in oklab, var(--color-surface) 55%, transparent);
+}
+
+/* A card whose content goes edge to edge — a media tile, a thumbnail. The
+   padding moves inside rather than disappearing, so the inner block still
+   lands on the same 1.75rem the padded cards use. `--card-p` rather than a
+   `p-0` override because utility-vs-utility ordering is not something worth
+   depending on. */
+@utility card-flush {
+  --card-p: 0;
+  overflow: hidden;
+}
+
+/* The interactive variant. Lime on the border because a card you can click is
+   an action, and actions are lime — the lift and the border arrive together
+   so the affordance reads before the cursor lands. */
+@utility card-interactive {
+  transition:
+    border-color var(--duration-base) var(--ease-brand),
+    background-color var(--duration-base) var(--ease-brand),
+    transform var(--duration-base) var(--ease-brand);
+
+  &:hover {
+    border-color: color-mix(in oklab, var(--color-accent) 40%, transparent);
+    background-color: color-mix(in oklab, var(--color-surface) 80%, transparent);
+    transform: translateY(-0.25rem);
+  }
+}
+
+/**
+ * ICON CHIP — the violet plate behind a card's icon.
+ *
+ * These are the clearest example of the accent split. A service icon is not
+ * something you tap; it is a graphic marking what kind of card this is. It was
+ * lime, which made ten decorative glyphs compete with the one button that
+ * actually mattered. In violet they read as brand furniture and lime goes
+ * quiet again.
+ *
+ * The glyph is violet-200 rather than violet-500 because 2.7:1 is a smudge.
+ */
+@utility chip-icon {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-graphic-line);
+  background-color: var(--color-graphic-fill);
+  color: var(--color-graphic);
+  transition:
+    border-color var(--duration-base) var(--ease-brand),
+    background-color var(--duration-base) var(--ease-brand);
+
+  .group:hover & {
+    border-color: color-mix(in oklab, var(--color-accent-alt) 55%, transparent);
+    background-color: color-mix(in oklab, var(--color-accent-alt) 22%, transparent);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   STRUCTURE
+   -------------------------------------------------------------------------- */
+
+/**
+ * SECTION SEAM — violet's structural job, and the reason the page reads as
+ * one document rather than eight stacked pages.
+ *
+ * A hairline that ignites to violet at the centre and fades to nothing at both
+ * ends. It is the "section transition" role in the brand hierarchy, spent in
+ * the cheapest possible way: two gradients, no element of its own beyond a
+ * 1px rule, and a soft bloom above it that suggests the seam is lit rather
+ * than drawn.
+ */
+@utility section-seam {
+  position: relative;
+  height: 1px;
+  border: 0;
+  /* The centre stop is violet-400, not violet-500. At 1px tall against
+     near-black there is no area for a colour to accumulate in, so the
+     saturated mid-tone that reads as "violet" on a large fill reads as a dark
+     grey scratch here — the line has to be lifted up the ramp before the hue
+     survives at this size. */
+  background-image: linear-gradient(
+    to right,
+    transparent,
+    color-mix(in oklab, var(--color-violet-500) 45%, transparent) 26%,
+    color-mix(in oklab, var(--color-violet-400) 92%, transparent) 50%,
+    color-mix(in oklab, var(--color-violet-500) 45%, transparent) 74%,
+    transparent
+  );
+
+  /* The bloom is centred on the rule rather than rising from it, so the seam
+     reads as lit from within instead of as a shadow cast downward. */
+  &::after {
+    content: "";
+    position: absolute;
+    inset-inline: 22%;
+    top: 50%;
+    height: 7rem;
+    translate: 0 -50%;
+    pointer-events: none;
+    background-image: radial-gradient(
+      ellipse at 50% 50%,
+      rgb(139 87 255 / 0.22) 0%,
+      rgb(109 40 255 / 0.09) 40%,
+      transparent 70%
+    );
+  }
+}
+
+/* The faint blueprint grid behind hero and section breaks. Reads as
+   "designed by people who use a grid", which is exactly the message. */
+@utility grid-lines {
+  background-image:
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+  background-size: 80px 80px;
+}
+
+/**
+ * UNDERLINE ON HOVER — the quiet link affordance.
+ *
+ * A rule that grows from the link's own start edge rather than fading in.
+ * Used for text links that are not buttons: the footer columns, inline links
+ * in body copy. It exists as a utility rather than as three slightly
+ * different per-component implementations, because "the links behave the
+ * same everywhere" is most of what a visitor reads as craft.
+ *
+ * `scaleX` on a pseudo-element, not `text-decoration` or a `width`
+ * transition: both of the latter animate layout, and this animates only a
+ * transform. `transform-origin: right` is the start edge in this document.
+ */
+@utility link-underline {
+  position: relative;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    bottom: -0.15em;
+    height: 1px;
+    background-color: currentColor;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform var(--duration-base) var(--ease-brand);
+  }
+
+  &:hover::after,
+  &:focus-visible::after {
+    transform: scaleX(1);
+  }
+}
+
+/* Hairline rule that fades at both ends — used between sections instead of
+   a hard <hr>. */
+@utility rule-fade {
+  height: 1px;
+  border: 0;
+  background-image: linear-gradient(
+    to right,
+    transparent,
+    var(--color-border-strong) 18%,
+    var(--color-border-strong) 82%,
+    transparent
+  );
+}
+
+/* Standard page gutter + max width. One utility, so every section aligns to
+   the same optical column with no per-section drift. */
+@utility container-page {
+  width: 100%;
+  max-width: var(--layout-max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+@utility container-wide {
+  width: 100%;
+  max-width: var(--layout-wide);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+@utility section-y {
+  padding-block: var(--section-py);
+}
+
+/* --------------------------------------------------------------------------
+   MASKS
+   Soft graffiti energy without a single childish spray-can graphic: brush
+   and torn-edge shapes are applied as *masks* over brand gradients, so the
+   "paint" is always on-palette.
+   -------------------------------------------------------------------------- */
+/**
+ * Brush-stroke mask. Applied over a brand gradient so the "paint" is always
+ * on-palette — this is how the identity gets its hand-cut energy without a
+ * single spray-can graphic.
+ *
+ * The stroke is inlined as a data URI rather than fetched from /textures.
+ * A mask that arrives late is a mask that pops, and an element sized 100%×100%
+ * against a missing file renders as a hard rectangle — the exact failure that
+ * would look like a bug on first paint.
+ */
+@utility mask-brush {
+  --brush: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 80' preserveAspectRatio='none'%3E%3Cpath fill='%23000' d='M4 42c22-14 48-18 74-14 24 4 46 14 71 15 27 1 52-9 79-11 24-2 47 4 71 9 22 5 45 8 67 3 12-3 22-8 30-16 2 12 0 25-8 33-10 10-25 13-39 14-30 2-59-6-89-8-27-2-53 4-80 7-30 3-60 2-89-5-22-5-44-13-67-11-8 1-16 3-22 8-2-8-1-17 2-24z'/%3E%3C/svg%3E");
+  mask-image: var(--brush);
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+  -webkit-mask-image: var(--brush);
+  -webkit-mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+}
+
+/* Fades a marquee or overflow strip into the background at both edges. */
+@utility mask-edges-x {
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 8%,
+    black 92%,
+    transparent
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 8%,
+    black 92%,
+    transparent
+  );
+}
+
+/* --------------------------------------------------------------------------
+   MOTION HELPERS
+   -------------------------------------------------------------------------- */
+
+/* Promotes an element for transform animation and cleans up after itself.
+   Applied to parallax layers and reveal wrappers. */
+@utility will-animate {
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
+/* Screen-reader-only, focusable — the skip link. */
+@utility sr-only-focusable {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+
+  &:focus-visible {
+    position: fixed;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip-path: none;
+    z-index: var(--z-preloader);
+  }
+}

@@ -1,0 +1,14 @@
+/* ==========================================================================
+   WEBCRAFT — GLOBAL STYLESHEET ENTRY
+   Import order is load-bearing: engine → tokens → base → utilities.
+   ========================================================================== */
+
+@import "tailwindcss";
+
+@import "../styles/tokens.css";
+@import "../styles/base.css";
+@import "../styles/utilities.css";
+@import "../styles/motion.css";
+
+/* Dark is the brand, not a mode. */
+@custom-variant dark (&:where(:root, .dark, .dark *));

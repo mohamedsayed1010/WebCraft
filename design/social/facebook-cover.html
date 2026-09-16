@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>WebCraft — Facebook cover (1640×924)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=JetBrains+Mono:wght@500&family=Noto+Kufi+Arabic:wght@600&display=block"
+      rel="stylesheet"
+    />
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { width: 1640px; height: 924px; overflow: hidden; }
+
+      /*
+        1640×924 is Facebook's recommended upload size.
+        · Desktop crops to the centre band (≈624px tall) — everything that
+          matters lives between y=150 and y=774.
+        · The profile picture overlaps the lower-left on desktop, so that
+          corner is deliberately empty.
+      */
+      .canvas {
+        position: relative;
+        width: 1640px;
+        height: 924px;
+        background:
+          radial-gradient(60% 70% at 88% 6%, rgba(76, 124, 255, 0.34), transparent 70%),
+          radial-gradient(50% 60% at 4% 96%, rgba(52, 211, 192, 0.32), transparent 70%),
+          linear-gradient(135deg, #eaf0ff 0%, #dfe8ff 48%, #e2f7f3 100%);
+        overflow: hidden;
+        font-family: Archivo, system-ui, sans-serif;
+        color: #0e1430;
+      }
+      .grid {
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(to right, rgba(63, 87, 230, 0.07) 1px, transparent 1px),
+          linear-gradient(to bottom, rgba(63, 87, 230, 0.07) 1px, transparent 1px);
+        background-size: 72px 72px;
+      }
+      /* oversized watermark of the mark, bled off the right edge */
+      .watermark { position: absolute; right: -190px; top: 40px; width: 900px; opacity: 0.09; }
+      .watermark svg { width: 100%; height: auto; display: block; }
+
+      .content { position: absolute; left: 132px; top: 236px; width: 880px; }
+      .lockup { display: flex; align-items: center; gap: 28px; }
+      .lockup .mark { width: 128px; height: 128px; filter: drop-shadow(0 18px 34px rgba(31, 40, 112, 0.28)); }
+      .lockup svg { width: 100%; height: 100%; display: block; }
+      .name { font-size: 104px; font-weight: 800; letter-spacing: -0.035em; line-height: 1; }
+      .name span { color: #3f57e6; }
+      .rule { width: 190px; height: 9px; border-radius: 9px; margin: 34px 0 26px; background: linear-gradient(90deg, #34d3c0, #4c7cff); }
+      .tagline { font-size: 40px; font-weight: 700; letter-spacing: -0.02em; color: #1f2870; }
+      .arabic { font-family: "Noto Kufi Arabic", system-ui, sans-serif; font-size: 27px; font-weight: 600; color: #454d6d; margin-top: 16px; direction: rtl; text-align: left; }
+      .services { margin-top: 30px; font-family: "JetBrains Mono", monospace; font-weight: 500; font-size: 21px; letter-spacing: 0.06em; color: #454d6d; }
+
+      /* product motif: a browser and a phone, drawn, never a stock photo */
+      .stage { position: absolute; right: 118px; top: 232px; width: 560px; height: 420px; }
+      .browser {
+        position: absolute; inset: 0 60px 40px 0;
+        background: #f6f8ff; border: 1px solid rgba(31, 40, 112, 0.12); border-radius: 22px;
+        box-shadow: 0 40px 90px -30px rgba(31, 40, 112, 0.45); overflow: hidden;
+      }
+      .bar { height: 46px; background: #eef1f8; border-bottom: 1px solid rgba(31, 40, 112, 0.08); display: flex; align-items: center; gap: 9px; padding: 0 18px; }
+      .dot { width: 11px; height: 11px; border-radius: 50%; }
+      .body { padding: 26px 28px; display: grid; gap: 14px; }
+      .hero-line { height: 26px; border-radius: 8px; background: linear-gradient(90deg, #3f57e6, #4c7cff); width: 62%; }
+      .line { height: 13px; border-radius: 7px; background: rgba(31, 40, 112, 0.14); }
+      .cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 12px; padding-right: 96px; }
+      .card { height: 74px; border-radius: 14px; background: #eaf0ff; border: 1px solid rgba(31, 40, 112, 0.08); }
+      .card.accent { background: linear-gradient(135deg, #34d3c0, #4c7cff); border-color: transparent; }
+      .phone {
+        position: absolute; right: 0; bottom: 0; width: 176px; height: 330px;
+        background: linear-gradient(180deg, #f4f6fb, #c5ccdc); border-radius: 32px; padding: 7px;
+        border: 2px solid #fff; box-shadow: 0 40px 80px -28px rgba(31, 40, 112, 0.5);
+      }
+      .screen { width: 100%; height: 100%; border-radius: 26px; background: linear-gradient(160deg, #3f57e6, #4c7cff 55%, #19b3a2); position: relative; overflow: hidden; }
+      .screen::after { content: ""; position: absolute; inset: 14px 16px auto; height: 9px; border-radius: 6px; background: rgba(255, 255, 255, 0.55); }
+      .screen .s-line { position: absolute; left: 16px; right: 16px; height: 7px; border-radius: 5px; background: rgba(255, 255, 255, 0.32); }
+    </style>
+  </head>
+  <body>
+    <div class="canvas">
+      <div class="grid"></div>
+
+      <div class="watermark">
+        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path fill="#3f57e6" d="M15 54h9l10.5-28h-9z" />
+          <path fill="#3f57e6" d="M36 54h9l11-36h-9z" />
+          <path fill="#4c7cff" d="M4 18h9l11 36h-9z" />
+          <path fill="#4c7cff" d="M25.5 26h9L45 54h-9z" />
+          <path fill="#34d3c0" d="M56.5 6.5l3.5 3.5-3.5 3.5L53 10z" />
+        </svg>
+      </div>
+
+      <div class="content">
+        <div class="lockup">
+          <div class="mark">
+            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="f" x1="8" y1="16" x2="44" y2="56" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#34D3C0" /><stop offset="1" stop-color="#4C7CFF" />
+                </linearGradient>
+                <linearGradient id="b" x1="18" y1="56" x2="56" y2="16" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#3B47D6" /><stop offset="1" stop-color="#6A7BFF" />
+                </linearGradient>
+              </defs>
+              <path fill="url(#b)" d="M15 54h9l10.5-28h-9z" />
+              <path fill="url(#b)" d="M36 54h9l11-36h-9z" />
+              <path fill="url(#f)" d="M4 18h9l11 36h-9z" />
+              <path fill="url(#f)" d="M25.5 26h9L45 54h-9z" />
+              <path fill="#34D3C0" d="M56.5 6.5l3.5 3.5-3.5 3.5L53 10z" />
+            </svg>
+          </div>
+          <div class="name">Web<span>Craft</span></div>
+        </div>
+
+        <div class="rule"></div>
+        <div class="tagline">Software &amp; Digital Solutions</div>
+        <div class="arabic">شركة برمجيات وحلول رقمية</div>
+        <div class="services">UI/UX · WEB · BACKEND · E-COMMERCE · SEO · ANDROID</div>
+      </div>
+
+      <div class="stage">
+        <div class="browser">
+          <div class="bar">
+            <span class="dot" style="background: #ff5f57"></span>
+            <span class="dot" style="background: #febc2e"></span>
+            <span class="dot" style="background: #28c840"></span>
+          </div>
+          <div class="body">
+            <div class="hero-line"></div>
+            <div class="line" style="width: 84%"></div>
+            <div class="line" style="width: 68%"></div>
+            <div class="cards">
+              <div class="card accent"></div>
+              <div class="card"></div>
+            </div>
+          </div>
+        </div>
+        <div class="phone">
+          <div class="screen">
+            <div class="s-line" style="top: 60px; width: 60%"></div>
+            <div class="s-line" style="top: 82px; width: 76%"></div>
+            <div class="s-line" style="top: 132px; height: 52px; border-radius: 12px; background: rgba(255, 255, 255, 0.22)"></div>
+            <div class="s-line" style="top: 200px; height: 52px; border-radius: 12px; background: rgba(255, 255, 255, 0.22)"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

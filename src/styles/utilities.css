@@ -1,0 +1,163 @@
+/* ==========================================================================
+   WEBCRAFT — SIGNATURE UTILITIES
+   ========================================================================== */
+
+@utility container-x {
+  width: 100%;
+  max-width: 88rem;
+  margin-inline: auto;
+  padding-inline: clamp(1.25rem, 4vw, 3.5rem);
+}
+
+@utility section-y {
+  padding-block: clamp(5rem, 11vw, 9.5rem);
+}
+
+/* Mono micro-label: indices, eyebrows, tags. Arabic swaps to the body face. */
+@utility label-mono {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1.2;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+:lang(ar) .label-mono:not(.ltr) {
+  font-family: var(--font-sans);
+  letter-spacing: 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+/* The logo's ribbon gradient as type — darker stops so it stays legible on the light azure grounds. */
+@utility text-gradient {
+  background-image: linear-gradient(100deg, var(--color-aqua-600) 0%, var(--color-brand-500) 45%, var(--color-brand-700) 100%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Soft highlighter behind a phrase — the fold of the ribbon, as a sweep. */
+@utility highlight {
+  position: relative;
+  isolation: isolate;
+  white-space: nowrap;
+  &::before {
+    content: "";
+    position: absolute;
+    inset-inline: -0.12em;
+    inset-block: 0.52em 0.06em;
+    z-index: -1;
+    border-radius: 0.2em;
+    background: linear-gradient(90deg, rgb(52 211 192 / 0.35), rgb(76 124 255 / 0.28));
+    transform: skewX(-12deg);
+  }
+}
+
+@utility grid-bg {
+  background-image:
+    linear-gradient(to right, rgb(63 87 230 / 0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(63 87 230 / 0.07) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
+@utility dot-bg {
+  background-image: radial-gradient(rgb(63 87 230 / 0.18) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+@utility mask-fade-b {
+  -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent);
+  mask-image: linear-gradient(to bottom, #000 55%, transparent);
+}
+
+@utility mask-fade-x {
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
+}
+
+@utility mask-radial {
+  -webkit-mask-image: radial-gradient(ellipse at center, #000 30%, transparent 75%);
+  mask-image: radial-gradient(ellipse at center, #000 30%, transparent 75%);
+}
+
+/* Aurora wash — the light-theme replacement for dark glows. */
+@utility aurora {
+  background:
+    radial-gradient(45% 55% at 85% 5%, rgb(76 124 255 / 0.32), transparent 70%),
+    radial-gradient(40% 50% at 5% 95%, rgb(52 211 192 / 0.28), transparent 70%),
+    radial-gradient(35% 45% at 55% 45%, rgb(163 181 255 / 0.25), transparent 70%);
+}
+
+/* Soft glow disc. A radial gradient instead of `filter: blur()` on a solid
+   circle: identical look, but no full-screen-sized blur for the GPU to
+   re-rasterise while things scroll or animate above it. */
+@utility glow {
+  border-radius: 9999px;
+  background: radial-gradient(closest-side, var(--glow), transparent);
+  pointer-events: none;
+}
+
+/* Frosted surface without a live backdrop blur — used on small chips/cards. */
+@utility glass {
+  background: rgb(246 248 255 / 0.84);
+  border: 1px solid rgb(255 255 255 / 0.8);
+}
+
+/* The one real backdrop blur on the site: the sticky header. */
+@utility glass-blur {
+  background: rgb(246 248 255 / 0.72);
+  border: 1px solid rgb(255 255 255 / 0.7);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  backdrop-filter: blur(14px) saturate(160%);
+}
+
+/* Gradient hairline border that follows the element's radius. */
+@utility ring-gradient {
+  position: relative;
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    padding: 1px;
+    border-radius: inherit;
+    background: var(--ring, linear-gradient(135deg, rgb(52 211 192 / 0.6), rgb(14 20 48 / 0.06) 45%, rgb(76 124 255 / 0.6)));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+}
+
+/* Pointer spotlight — `--mx` / `--my` are set by <Spotlight>. */
+@utility spotlight {
+  position: relative;
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: var(--spot, 0);
+    transition: opacity 0.4s var(--ease-brand);
+    background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgb(76 124 255 / 0.12), transparent 45%);
+  }
+}
+
+@utility scrollbar-none {
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
+@utility sr-only-focusable {
+  position: absolute;
+  inset-inline-start: 1rem;
+  top: -100px;
+  z-index: 100;
+  padding: 0.75rem 1.25rem;
+  border-radius: 999px;
+  background: var(--color-brand-600);
+  color: #fff;
+  font-weight: 600;
+  &:focus { top: 1rem; }
+}

@@ -1,0 +1,246 @@
+/* ==========================================================================
+   WEBCRAFT — BASE LAYER
+   Global element defaults, the paper-inversion mechanism, focus treatment,
+   and the reduced-motion contract.
+   ========================================================================== */
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    border-color: var(--color-border);
+  }
+
+  html {
+    /* Lenis drives smooth scrolling. Native smooth-scroll is left off so the
+       two never fight; it is re-enabled in the reduced-motion block below,
+       where Lenis is disabled. */
+    scroll-behavior: auto;
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    line-height: var(--leading-body);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* The site is a horizontal-overflow-free zone. Marquees and oversized
+       type scroll inside their own containers, never the document. */
+    overflow-x: clip;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 800;
+    line-height: var(--leading-display);
+    letter-spacing: var(--tracking-display); /* 0 — see tokens.css */
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Arabic text must never be uppercased or small-capped — the script has no
+     case, so the declaration is at best inert and at worst triggers a
+     fallback in engines that try to synthesise it. Any `uppercase` on this
+     site is scoped to an element that also sets the Latin or pixel face. */
+  [lang="ar"],
+  [lang^="ar-"] {
+    text-transform: none;
+  }
+
+  /* Focus: visible, on-brand, and never removed. Lime at 16:1 on the dark
+     ground is one of the most legible focus rings available to us. */
+  :focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 3px;
+    border-radius: var(--radius-xs);
+  }
+
+  ::selection {
+    background-color: var(--color-lime-500);
+    color: var(--color-ink-900);
+  }
+
+  /* Media defaults — every image is block-level and fluid by default so a
+     missing utility class can never blow out a layout. */
+  img,
+  svg,
+  video,
+  canvas {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   PAPER INVERSION
+   --------------------------------------------------------------------------
+   The site is dark-first. A handful of sections invert to white to break the
+   rhythm — the Process ladder and the Founder block are the intended users.
+
+   Applying `.paper` to a section re-points the semantic tokens; every
+   descendant adapts with zero conditional classes. Note that `--color-accent`
+   becomes violet inside a paper block, because lime on white fails contrast.
+   -------------------------------------------------------------------------- */
+.paper {
+  --color-bg: var(--color-paper);
+  --color-surface: var(--color-ink-50);
+  --color-elevated: #ffffff;
+  --color-fg: var(--color-ink-900);
+  --color-fg-muted: var(--color-ink-500);
+  --color-fg-subtle: var(--color-ink-400);
+  --color-border: rgb(11 11 11 / 0.12);
+  --color-border-strong: rgb(11 11 11 / 0.24);
+  --color-accent: var(--color-violet-500); /* lime is illegible on white */
+  --color-accent-fg: var(--color-paper);
+  --color-focus: var(--color-violet-500);
+
+  /* The graphic ramp inverts too. On dark it lightens away from violet-500;
+     on paper it has to darken, or every icon and index in the block turns
+     into a pale smudge on white. violet-600 measures 8.9:1 on paper — the
+     same ratio violet-200 gives on ink, which is why the two blocks feel
+     equally weighted despite being opposites. */
+  --color-graphic: var(--color-violet-600);
+  --color-graphic-muted: var(--color-violet-500);
+  --color-graphic-fill: rgb(109 40 255 / 0.09);
+  --color-graphic-line: rgb(109 40 255 / 0.22);
+  --color-danger: var(--color-violet-700);
+
+  --grid-line: rgb(11 11 11 / 0.07);
+  --noise-opacity: 0.03;
+
+  background-color: var(--color-bg);
+  color: var(--color-fg);
+}
+
+/* --------------------------------------------------------------------------
+   REDUCED MOTION
+   --------------------------------------------------------------------------
+   An award-worthy site is not one that ignores this. Framer Motion is handled
+   in JS via <MotionConfig reducedMotion="user">; this block covers CSS-driven
+   motion and hands scrolling back to the browser.
+
+   What survives reduced motion: opacity fades, colour transitions.
+   What is removed: parallax, marquees, transforms, the custom cursor,
+   the preloader sequence, and smooth scroll.
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* The custom cursor is a pointer-device affordance. On touch it is dead
+   weight, so it is gated here rather than in JS. */
+@media (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .cursor-root {
+    display: none;
+  }
+}
+
+/* ==========================================================================
+   BIDIRECTIONAL TEXT
+   --------------------------------------------------------------------------
+   The document is `dir="rtl"`. Everything below exists because Arabic layouts
+   fail in specific, predictable ways that a left-to-right site never hits.
+   ========================================================================== */
+
+/**
+ * A run of Latin text inside an Arabic sentence — a brand name, a domain, a
+ * service label like "SEO". Sets the Latin face and, critically, isolates the
+ * run from the surrounding bidi context.
+ *
+ * Without isolation the Unicode bidirectional algorithm resolves the whole
+ * line together, and trailing punctuation jumps to the wrong end: `Next.js.`
+ * inside an Arabic sentence renders as `.Next.js`. `isolate` scopes the
+ * algorithm to the span and fixes it.
+ */
+.latin {
+  font-family: var(--font-latin);
+  unicode-bidi: isolate;
+  direction: ltr;
+}
+
+/**
+ * Numerals, phone numbers, prices, dates.
+ *
+ * Western digits are correct for Egyptian commercial writing — Arabic-Indic
+ * numerals (٠١٢٣) read as formal or religious register, not as a price list.
+ * They are inherently left-to-right, so a phone number sitting at the end of
+ * an Arabic line will reverse its country code without this isolation.
+ * `tnum` keeps animated counters from jittering as digits change width.
+ */
+.numeric {
+  unicode-bidi: isolate;
+  direction: ltr;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+/**
+ * Pixel micro-labels and Latin display lockups. Grouped here rather than in
+ * the utility so the isolation rule is stated once, next to its reasoning.
+ */
+.pixel-label,
+.latin-display {
+  unicode-bidi: isolate;
+  direction: ltr;
+}
+
+/**
+ * Icons that encode direction — arrows, chevrons, the "next" caret.
+ *
+ * In an RTL layout "forward" points left. Rather than maintain mirrored icon
+ * components, the arrow is authored pointing right and flipped here. Applied
+ * deliberately per icon: a checkmark or a star must NOT be mirrored, which is
+ * why this is an opt-in class and not a blanket `svg { transform: scaleX(-1) }`.
+ */
+.rtl-flip {
+  transform: scaleX(-1);
+}
+
+/* ==========================================================================
+   AMBIENT GRID DRIFT
+   --------------------------------------------------------------------------
+   Moves the blueprint grid exactly one cell (80px, matching `grid-lines`'
+   background-size) over 26 seconds, so the loop is seamless and the hero is
+   never completely static without anything visibly moving in it.
+
+   `background-position` on a layer that paints nothing but the grid is the
+   cheapest possible way to do this: no layout, no paint of any content, and
+   nothing for the compositor to re-rasterise. The reduced-motion block above
+   already reduces every animation on the page to 0.01ms, so this needs no
+   guard of its own.
+   ========================================================================== */
+
+@keyframes wc-grid-drift {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 80px 80px;
+  }
+}
+
+.grid-drift {
+  animation: wc-grid-drift 26s linear infinite;
+}

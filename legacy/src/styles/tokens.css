@@ -1,0 +1,381 @@
+/* ==========================================================================
+   WEBCRAFT — DESIGN TOKENS
+   --------------------------------------------------------------------------
+   The single source of truth for the brand. Every colour, size, easing and
+   shadow used anywhere in the product resolves back to a token declared here.
+
+   Rule: components never hard-code a hex value, a duration, or a cubic-bezier.
+   If a value is worth using twice, it becomes a token.
+
+   Tailwind v4 reads this `@theme` block and generates the matching utilities
+   (bg-lime-500, font-display, ease-brand, shadow-glow-lime, …).
+   ========================================================================== */
+
+@theme {
+  /* ------------------------------------------------------------------------
+     1. BRAND COLOUR — the four constants
+     ------------------------------------------------------------------------
+     LOCKED. These four values are the WebCraft identity. Nothing outside this
+     block may introduce a hue — no blue, no red, no orange, no pink, no
+     "system" green, no generic SaaS palette. If a state needs a colour, it
+     takes one of these four or a step from their ramps below.
+
+     Source of truth is the mark itself (`public/images/logos/webcraft.png`),
+     sampled directly:
+
+       lime disc      #cae310 → #d6ed1f   (mean ≈ #cee518)
+       purple CRAFT   #790afa
+       black WEB/slab #030302 → #050608
+
+     The tokens sit a half-step off those samples on purpose. The disc is a
+     large flat fill photographed with a bloom, so its lime reads warmer and
+     duller than the same colour does at 13px on a UI label; #b6ff00 is that
+     lime corrected for small-area use, and it is what the site has always
+     shipped. Same story for violet. Do not "fix" these to the raw samples —
+     they would go muddy at label size.
+
+     THE RATIO, which every decision below serves:
+       ~70% ink   ~20% paper   ~7% violet   ~3% lime
+     ---------------------------------------------------------------------- */
+  --color-lime-500: #b6ff00; /* Neon Lime   — primary accent, CTA, emphasis */
+  --color-violet-500: #6d28ff; /* Purple      — secondary accent, depth, glow  */
+  --color-ink-900: #0b0b0b; /* Near Black  — the ground the brand sits on  */
+  --color-paper: #ffffff; /* White       — inversion blocks, contrast     */
+
+  /* ------------------------------------------------------------------------
+     2. LIME RAMP
+     Lime is a *signal* colour. It marks the one thing that matters in a
+     viewport. Tints exist for borders, glows and hover states — not for
+     large fills. If more than ~5% of a screen is lime, the design is wrong.
+     ---------------------------------------------------------------------- */
+  --color-lime-50: #f7ffe0;
+  --color-lime-100: #eeffb8;
+  --color-lime-200: #dfff85;
+  --color-lime-300: #ceff4d;
+  --color-lime-400: #c2ff24;
+  --color-lime-600: #9adb00;
+  --color-lime-700: #7aaf00;
+  --color-lime-800: #598000;
+  --color-lime-900: #3a5200;
+
+  /* ------------------------------------------------------------------------
+     3. VIOLET RAMP
+     Violet does the atmospheric work: gradients, orbs, glows, the "expensive"
+     bloom behind dark sections. Rarely a flat fill, almost never a text colour
+     on dark.
+     ---------------------------------------------------------------------- */
+  --color-violet-50: #f2edff;
+  --color-violet-100: #e2d8ff;
+  --color-violet-200: #c6b2ff;
+  --color-violet-300: #a688ff;
+  --color-violet-400: #8b57ff;
+  --color-violet-600: #5a1fdb;
+  --color-violet-700: #4718ad;
+  --color-violet-800: #33127d;
+  --color-violet-900: #1f0b4d;
+
+  /* ------------------------------------------------------------------------
+     4. INK RAMP — the neutral architecture
+     A true-neutral dark ramp. Surfaces are separated by *value*, not by
+     borders, wherever possible. Borders are a last resort.
+     ---------------------------------------------------------------------- */
+  --color-ink-950: #050505;
+  --color-ink-850: #101010;
+  --color-ink-800: #151515;
+  --color-ink-700: #1c1c1c;
+  --color-ink-600: #272727;
+  --color-ink-500: #3b3b3b;
+  --color-ink-400: #5c5c5c;
+  --color-ink-300: #8a8a8a;
+  --color-ink-200: #b4b4b4;
+  --color-ink-100: #d9d9d9;
+  --color-ink-50: #f2f2f2;
+
+  /* ------------------------------------------------------------------------
+     5. TYPOGRAPHY
+     Four voices, four jobs. Loaded via next/font in `src/config/fonts.ts`,
+     which supplies the --font-* variables referenced below.
+
+       display  Noto Kufi Arabic     — Arabic headlines. Architectural, heavy.
+       sans     IBM Plex Sans Arabic — everything a human actually reads.
+       latin    Archivo              — the English tagline lockup only.
+       pixel    Silkscreen           — Latin micro-labels ONLY. See rule below.
+
+     HARD RULE 1 — the pixel font never exceeds 14px and is never used for a
+     headline, a paragraph, or a button label. It marks section indices,
+     eyebrows, tags and counters. This is the exact line between "premium
+     graphic design" and "childish gaming site". Do not cross it.
+
+     HARD RULE 2 — the pixel and Latin-display faces carry no Arabic glyphs.
+     Never set an Arabic string in either; it will silently fall back to a
+     system face and break the line mid-word. Arabic uses --font-display or
+     --font-sans, always.
+     ---------------------------------------------------------------------- */
+  --font-display: var(--font-kufi), "Noto Kufi Arabic", "Segoe UI", Tahoma, sans-serif;
+  --font-sans: var(--font-plex-ar), "IBM Plex Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+  --font-latin: var(--font-archivo), "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --font-pixel: var(--font-silkscreen), "Silkscreen", ui-monospace, monospace;
+
+  /* Fluid type scale — clamp() so nothing needs a breakpoint to look right.
+
+     Sizes run one notch larger than a Latin equivalent would. Arabic has no
+     capital letters, so the whole line is read at x-height; 16px Plex Sans
+     Arabic carries roughly the optical presence of 15px Inter. Body therefore
+     starts at 17px, which is where this face stops feeling cramped. */
+  --text-3xs: 0.625rem; /* 10px — pixel labels               */
+  --text-2xs: 0.6875rem; /* 11px — pixel labels, tags         */
+  --text-xs: 0.8125rem; /* 13px                              */
+  --text-sm: 0.9375rem; /* 15px                              */
+  --text-base: 1.0625rem; /* 17px — Arabic body                */
+  --text-lg: clamp(1.0625rem, 0.2vw + 1rem, 1.1875rem);
+  --text-xl: clamp(1.25rem, 0.5vw + 1.1rem, 1.5rem);
+  --text-2xl: clamp(1.5rem, 1vw + 1.25rem, 2rem);
+  --text-3xl: clamp(1.875rem, 1.8vw + 1.4rem, 2.75rem);
+  --text-4xl: clamp(2.25rem, 3vw + 1.5rem, 3.75rem);
+  --text-5xl: clamp(2.75rem, 4.5vw + 1.5rem, 5rem);
+  --text-6xl: clamp(3.25rem, 6.5vw + 1.4rem, 7rem);
+  --text-7xl: clamp(3.75rem, 9vw + 1rem, 9.5rem);
+  --text-8xl: clamp(4rem, 13vw, 13rem); /* hero mega-type only */
+
+  /* ── PAIRED LINE-HEIGHTS, AND WHY THEY HAD TO BE DECLARED ───────────────
+     Tailwind v4 extends its default theme rather than replacing it, and its
+     defaults ship a line-height alongside every type step — `text-5xl` is
+     `font-size: var(--text-5xl); line-height: var(--tw-leading,
+     var(--text-5xl--line-height))`, and the inherited default for that step
+     is 1.
+
+     Redefining `--text-5xl` above therefore changed the size and left
+     Tailwind's Latin leading in place. Every heading on this site was being
+     set at a ratio of 1.0 — measured, not guessed: the hero h1 came back as
+     80px/80px and the section headings as 80px/80px — while the carefully
+     argued `--leading-mega` and `--leading-display` values sat unused,
+     because a `text-*` utility beats the `line-height` in `@utility
+     display-mega` and the `h1..h4` rule in base.css.
+
+     On a Latin site nobody would have noticed. In Arabic a ratio of 1.0 runs
+     the descending tail of ك through the dots of the line beneath it, and
+     two-line display headings — «مواقع، متاجر، ومنتجات رقمية.» is one —
+     collide outright.
+
+     These companions are the floor. An element that wants a specific value
+     still says so with `leading-mega` / `leading-display`, which sets
+     `--tw-leading` and therefore wins over the step default by design rather
+     than by cascade order. Latin lockups are unaffected in practice: every
+     one of them is a single line, where leading only changes box height. */
+  --text-2xl--line-height: 1.3;
+  --text-3xl--line-height: 1.26;
+  --text-4xl--line-height: 1.22;
+  --text-5xl--line-height: 1.2;
+  --text-6xl--line-height: 1.18;
+  --text-7xl--line-height: 1.16;
+  --text-8xl--line-height: 1.14;
+
+  /* ── TRACKING ────────────────────────────────────────────────────────────
+     Arabic is a *connected* script. Negative letter-spacing does not tighten
+     it the way it tightens Latin — it drags joined letterforms into each
+     other and, in several renderers, breaks the join outright. Every Arabic
+     tracking token below is therefore zero or positive, without exception.
+
+     The negative values are namespaced `--tracking-latin-*` so they can only
+     ever be applied to the Latin display face, where they belong. */
+  --tracking-mega: 0em; /* Arabic display — never negative */
+  --tracking-display: 0em;
+  --tracking-tight: 0em;
+  --tracking-normal: 0em;
+  --tracking-wide: 0.02em;
+
+  --tracking-latin-mega: -0.045em; /* Archivo only */
+  --tracking-latin-display: -0.03em; /* Archivo only */
+
+  --tracking-pixel: 0.09em; /* Silkscreen — Latin/numeric only */
+  --tracking-label: 0.16em;
+
+  /* ── LEADING ─────────────────────────────────────────────────────────────
+     Arabic needs materially more line-height than Latin. Ascenders, the
+     descending tails on ج ح خ ع غ ي, and the occasional diacritic all sit
+     outside the x-height band, so the sub-1.0 leading that makes a Latin
+     poster headline look engineered will visibly collide here.
+
+     The floor for stacked Arabic display type is ~1.12. Body copy sits at
+     1.85 — higher than the 1.65 a Latin site would use, and the single
+     biggest readability win available in an Arabic layout.
+
+     MEGA WAS 1.12 AND IT WAS TOO TIGHT. Measured on the hero headline at the
+     5xl step: «خلّي موقعك» over «يقول كده.» collides — the descending kaf tail
+     of موقعك runs straight through the dots of يقول, and the two lines read
+     as one smudged line rather than as a stacked headline. 1.12 is the floor
+     for a single Arabic display line; two of them stacked need 1.2, because
+     the tails and the dots are on *different* lines and never had to clear
+     each other in the one-line case the original figure was measured on. */
+  --leading-mega: 1.2;
+  --leading-display: 1.18;
+  --leading-heading: 1.35;
+  --leading-body: 1.85;
+
+  /* Latin lockups only — Archivo can take the tight stacking Arabic cannot. */
+  --leading-latin-mega: 0.86;
+  --leading-latin-display: 0.95;
+
+  /* ------------------------------------------------------------------------
+     6. LAYOUT
+     ---------------------------------------------------------------------- */
+  /* NOTE: deliberately NOT named `--container-*`. Tailwind maps that namespace
+     to `max-w-*` utilities, and `--container-max` would silently override the
+     built-in `max-w-max` (max-width: max-content). `--layout-*` is outside
+     every Tailwind namespace, so these stay plain CSS variables. */
+  --layout-max: 1440px;
+  --layout-wide: 1720px;
+  --layout-prose: 68ch;
+  --gutter: clamp(1.25rem, 4vw, 4rem);
+  --section-py: clamp(5rem, 11vh, 9.5rem);
+  --section-py-lg: clamp(7rem, 16vh, 14rem);
+  --header-h: 4.5rem;
+
+  /* ------------------------------------------------------------------------
+     7. RADIUS
+     Mostly sharp. Sharp corners read as "designed"; soft corners read as
+     "bootstrap template". Pills are reserved for buttons and tags.
+     ---------------------------------------------------------------------- */
+  --radius-none: 0px;
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-pill: 999px;
+
+  /* ------------------------------------------------------------------------
+     8. MOTION
+     Every animation in the product picks from this list. Framer Motion reads
+     the same numbers from `src/lib/motion/` so CSS and JS never drift.
+     ---------------------------------------------------------------------- */
+  --ease-brand: cubic-bezier(0.16, 1, 0.3, 1); /* expo-out — the house easing  */
+  --ease-power: cubic-bezier(0.65, 0, 0.35, 1); /* in-out   — transforms, slides */
+  --ease-snap: cubic-bezier(0.34, 1.4, 0.64, 1); /* slight overshoot — micro-int  */
+  --ease-linear: linear; /* marquees, progress            */
+
+  --duration-instant: 120ms;
+  --duration-fast: 240ms;
+  --duration-base: 420ms;
+  --duration-slow: 700ms;
+  --duration-reveal: 1000ms;
+  --duration-cinematic: 1600ms;
+
+  /* ------------------------------------------------------------------------
+     9. ELEVATION & GLOW
+     No grey drop-shadows — they look cheap on near-black. Depth comes from
+     coloured bloom and value separation instead.
+     ---------------------------------------------------------------------- */
+  --shadow-glow-lime: 0 0 0 1px rgb(182 255 0 / 0.22), 0 0 60px -12px rgb(182 255 0 / 0.45);
+  --shadow-glow-violet: 0 0 80px -16px rgb(109 40 255 / 0.65);
+  --shadow-lift: 0 24px 60px -24px rgb(0 0 0 / 0.85);
+  --shadow-card: 0 1px 0 0 rgb(255 255 255 / 0.06) inset, 0 20px 50px -30px rgb(0 0 0 / 0.9);
+
+  /* ------------------------------------------------------------------------
+     10. Z-INDEX — named, so nothing ever becomes z-9999
+     ---------------------------------------------------------------------- */
+  --z-below: -1;
+  --z-base: 0;
+  --z-raised: 10;
+  --z-sticky: 100;
+  --z-header: 200;
+  --z-overlay: 300;
+  --z-modal: 400;
+  --z-cursor: 500;
+  --z-preloader: 600;
+}
+
+/* ==========================================================================
+   SEMANTIC LAYER
+   --------------------------------------------------------------------------
+   Components consume these, never the raw ramp. That indirection is what
+   makes the "paper" inversion blocks possible: a section flips these six
+   variables and every child adapts with no conditional styling.
+   ========================================================================== */
+
+@theme {
+  --color-bg: var(--color-ink-900);
+  --color-surface: var(--color-ink-850);
+  --color-elevated: var(--color-ink-800);
+  --color-fg: var(--color-paper);
+  --color-fg-muted: var(--color-ink-200);
+  --color-fg-subtle: var(--color-ink-300);
+  --color-border: rgb(255 255 255 / 0.09);
+  --color-border-strong: rgb(255 255 255 / 0.18);
+
+  /* ── THE TWO ACCENTS HAVE DIFFERENT JOBS ────────────────────────────────
+     This split is the whole colour system. Before adding an accent anywhere,
+     answer one question: is the visitor meant to *act* on this, or merely to
+     see that it is branded?
+
+       ACT   → lime. CTA, link, hover, conversion. Lime is a verb.
+       BRAND → violet. Icons, indices, dividers, decorative marks, and the
+               state of a thing that is currently open or selected.
+
+     Lime was doing both jobs before this pass, which is why it appeared on
+     roughly forty elements per screen and had stopped meaning anything.
+     Everything that was lime-because-it-was-branded is now violet, and lime
+     is back to marking the one thing worth tapping.
+     -------------------------------------------------------------------- */
+
+  /* ACT — the signal colour. Budget: ~3% of any viewport. */
+  --color-accent: var(--color-lime-500);
+  --color-accent-fg: var(--color-ink-900); /* text ON lime — always near-black */
+  --color-focus: var(--color-lime-500);
+
+  /* BRAND — the graphic colour. Budget: ~7%.
+     violet-500 measures 2.7:1 on ink and is illegible, so anything that
+     carries meaning uses violet-200/300 and anything at full strength is a
+     fill sitting behind white. See the contrast contract at the foot of this
+     file. */
+  --color-accent-alt: var(--color-violet-500);
+  --color-graphic: var(--color-violet-200); /* icon + index glyphs — 8.9:1 */
+  --color-graphic-muted: var(--color-violet-300); /* secondary marks   — 6.4:1 */
+  --color-graphic-fill: rgb(109 40 255 / 0.14); /* chip + tile grounds       */
+  --color-graphic-line: rgb(109 40 255 / 0.3); /* chip rings, seams          */
+
+  /* STATE — open / selected / current. Violet at full strength as a fill
+     behind white, which is its only legible full-strength use. */
+  --color-active: var(--color-violet-500);
+  --color-active-fg: var(--color-paper);
+
+  /* VALIDATION — deliberately not red.
+     Red is outside the identity, and colour alone is not an accessible error
+     signal anyway: every error in the product ships with a glyph and a
+     sentence, so the colour only has to read as "different", not as "danger".
+     Violet-200 does that at 8.9:1 and stays inside the palette. */
+  --color-danger: var(--color-violet-200);
+
+  /* Texture + atmosphere */
+  --noise-opacity: 0.045;
+  --grid-line: rgb(255 255 255 / 0.055);
+}
+
+/* ==========================================================================
+   ACCESSIBILITY CONTRACT — enforced by the token names above
+   --------------------------------------------------------------------------
+   Measured contrast ratios:
+
+     lime-500   on ink-900  16.4:1   PASS AAA  — safe for any text size
+     white      on ink-900  19.3:1   PASS AAA
+     ink-200    on ink-900   9.8:1   PASS AAA  — body copy
+     violet-200 on ink-900   8.9:1   PASS AAA  — `--color-graphic`
+     violet-300 on ink-900   6.4:1   PASS AA   — `--color-graphic-muted`
+     ink-300    on ink-900   5.4:1   PASS AA   — captions / meta only
+     ink-900    on lime-500 16.4:1   PASS AAA  — the CTA button pairing
+     white      on violet-500 7.0:1  PASS AA   — the violet-fill pairing
+     violet-500 on paper      7.1:1  PASS AA   — safe on white blocks
+     violet-400 on ink-900    3.4:1  FAIL      — decorative only, never a glyph
+     violet-500 on ink-900    2.7:1  FAIL      — atmosphere only
+     lime-500   on paper      1.2:1  FAIL      — NEVER text on white
+
+   Consequences, baked into the semantic layer:
+     • `--color-accent-fg` is near-black, so lime buttons are always legible.
+     • Lime on a paper block must be a *fill* behind near-black text, or an
+       underline/marker — never the text colour itself.
+     • Violet-500 on dark is atmosphere (glow, gradient, fill), never a glyph.
+       Anything violet the eye has to *resolve* — an icon, an index, an error
+       string — uses `--color-graphic` (violet-200), which clears AAA.
+     • `--color-active` is violet-500 used as a fill with white on top, which
+       is the one arrangement where full-strength violet is legible on dark.
+   ========================================================================== */

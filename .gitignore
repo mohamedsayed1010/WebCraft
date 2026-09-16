@@ -1,0 +1,53 @@
+# dependencies
+node_modules/
+.pnp
+.pnp.*
+.yarn/*
+
+# next.js
+.next/
+out/
+build/
+next-env.d.ts
+
+# production
+dist/
+
+# env
+.env
+.env*.local
+!.env.example
+
+# testing
+coverage/
+
+# misc
+.DS_Store
+Thumbs.db
+*.pem
+*.tsbuildinfo
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# editors
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+
+# deploy
+.vercel
+
+# design source files (keep exports only)
+*.fig
+*.sketch
+/design-source/
+
+# raw screenshots of client work — two of these contain real end-user personal
+# data (national ID cards, a customer's name and email). Never commit or push
+# them; only the cropped WebP exports in public/images/work are publishable.
+/design/raw-screenshots/

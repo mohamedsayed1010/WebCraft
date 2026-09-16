@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>WebCraft — Facebook profile picture (1024×1024)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@800&display=block" rel="stylesheet" />
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { width: 1024px; height: 1024px; overflow: hidden; }
+      .canvas {
+        position: relative;
+        width: 1024px;
+        height: 1024px;
+        background:
+          radial-gradient(circle at 78% 18%, rgba(255, 255, 255, 0.4), transparent 45%),
+          radial-gradient(circle at 12% 88%, rgba(52, 211, 192, 0.85), transparent 52%),
+          linear-gradient(135deg, #3f57e6 0%, #4c7cff 52%, #19b3a2 100%);
+        display: grid;
+        place-items: center;
+        isolation: isolate;
+      }
+      /* faint engineering grid, fading out toward the circular crop */
+      .grid {
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(to right, rgba(255, 255, 255, 0.14) 1px, transparent 1px),
+          linear-gradient(to bottom, rgba(255, 255, 255, 0.14) 1px, transparent 1px);
+        background-size: 64px 64px;
+        -webkit-mask-image: radial-gradient(circle at center, #000 42%, transparent 72%);
+        mask-image: radial-gradient(circle at center, #000 42%, transparent 72%);
+      }
+      /* the crop Facebook applies — guides only, hidden in the export */
+      .safe { position: absolute; inset: 0; border-radius: 50%; box-shadow: 0 0 0 1px rgba(255, 0, 255, 0.6) inset; display: none; }
+      .mark { position: relative; width: 560px; height: 560px; filter: drop-shadow(0 30px 60px rgba(10, 16, 50, 0.35)); }
+      .mark svg { width: 100%; height: 100%; display: block; }
+      .wordmark {
+        position: absolute;
+        bottom: 132px;
+        left: 0;
+        right: 0;
+        text-align: center;
+        font-family: Archivo, system-ui, sans-serif;
+        font-weight: 800;
+        font-size: 74px;
+        letter-spacing: -0.03em;
+        color: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="canvas">
+      <div class="grid"></div>
+      <div class="mark">
+        <!-- translate(0 1.75): the spark extends the artwork upward, so the
+             drawing is nudged down to sit optically centred in the circle -->
+        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <g transform="translate(0 1.75)">
+            <path fill="rgba(255,255,255,0.62)" d="M15 54h9l10.5-28h-9z" />
+            <path fill="rgba(255,255,255,0.62)" d="M36 54h9l11-36h-9z" />
+            <path fill="#fff" d="M4 18h9l11 36h-9z" />
+            <path fill="#fff" d="M25.5 26h9L45 54h-9z" />
+            <path fill="#fff" d="M56.5 6.5l3.5 3.5-3.5 3.5L53 10z" />
+          </g>
+        </svg>
+      </div>
+      <div class="safe"></div>
+    </div>
+  </body>
+</html>
