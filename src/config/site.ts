@@ -6,11 +6,24 @@
  * here — nothing is invented, and a channel with no official account simply
  * does not exist in this file rather than being faked or left as a stub.
  */
+
+/**
+ * Canonical origin from `NEXT_PUBLIC_SITE_URL`, without a trailing slash.
+ * An unset or blank value (e.g. `NEXT_PUBLIC_SITE_URL=""`) falls back to
+ * Vercel's production domain when building on Vercel, then to localhost, and
+ * a bare host gets `https://`, so `new URL()` never throws.
+ */
+function resolveSiteUrl(value: string | undefined): string {
+  const raw =
+    value?.trim() || process.env.VERCEL_PROJECT_PRODUCTION_URL?.trim() || "http://localhost:3000";
+  const withScheme = /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
+  return withScheme.replace(/\/+$/, "");
+}
 export const siteConfig = {
   name: "WebCraft",
   nameAr: "ويب كرافت",
 
-  url: (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000").replace(/\/$/, ""),
+  url: resolveSiteUrl(process.env.NEXT_PUBLIC_SITE_URL),
 
   contact: {
     email: "support.webcraft.eg@gmail.com",
